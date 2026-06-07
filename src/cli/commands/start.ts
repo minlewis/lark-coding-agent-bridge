@@ -4,6 +4,7 @@ import { createInterface } from 'node:readline';
 import pkg from '../../../package.json';
 import { ClaudeAdapter } from '../../agent/claude/adapter';
 import { CodexAdapter } from '../../agent/codex/adapter';
+import { HermesAdapter } from '../../agent/hermes/adapter';
 import {
   AgentPreflightError,
   formatAgentPreflightDiagnostic,
@@ -431,6 +432,14 @@ export function createRuntimeAgent(
       ignoreUserConfig: codex.ignoreUserConfig === true,
       ignoreRules: codex.ignoreRules !== false,
       sandbox: profileConfig.sandbox.defaultMode,
+      larkChannel,
+    });
+  }
+  if (profileConfig.agentKind === 'hermes') {
+    const hermes = profileConfig.hermes ?? {};
+    return new HermesAdapter({
+      ...(hermes.binaryPath ? { binary: hermes.binaryPath } : {}),
+      ...(hermes.defaultModel ? { defaultModel: hermes.defaultModel } : {}),
       larkChannel,
     });
   }
